@@ -6,7 +6,6 @@ from lib.date import get_current_datetime, get_time_diff
 from lib.scanner import start_monitor
 
 def monitaur():
-    print("hi")
     print_banner()
     config = Config()
 
