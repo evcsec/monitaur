@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import sys
 from lib.config import Config
 from lib.input import ArgumentHandler

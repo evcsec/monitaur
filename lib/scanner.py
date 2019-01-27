@@ -5,42 +5,41 @@ from .logger import write_log
 
 def start_scan(host_name, url):  
     # Initiate a scan on the given URL
-    r = None
-    status_code = None
+    r, status_code = None
 
     try:
         r = requests.get(url)
     except requests.exceptions.Timeout:
-        error_string = "An error occured: timeout"
+        error_string = "[-] Error: Timeout..."
         write_log(host_name, 'Error', error_string)
         print(error_string)
     except requests.exceptions.TooManyRedirects:
-        error_string = "An error occured: toomanyredirects"
+        error_string = "[-] Error: Too many redirects..."
         write_log(host_name, 'Error', error_string)
         print(error_string)
     except requests.exceptions.RequestException as e:
-        print("an exception occurred")
+        print("[-] Error: An exception has occurred...")
         exception_args = e.args[0]
         error_string = str(exception_args)
-        write_log(host_name, 'Error')
-        print("Error = " + error_string)
+        write_log(host_name, 'Error', error_string)
+        print("[-] Exception Error: " + error_string)
         print(e)
 
     if r is not None:
         status_code = r.status_code
         write_log(host_name, 'Status Response', 'status_code = ' + str(status_code))
 
-    print("Status code for " + host_name + " = " + str(status_code))
+    print("[+] Status code for " + host_name + " = " + str(status_code))
 
 def do_scan(config, host_name, target_url, interval_time, last_scan):
     print('[+] Scanning: ' + target_url)
     if not validate_url(target_url):
-        print('Error: URL %s' % target_url + ' is not valid')
+        print('[-] Error: URL %s' % target_url + ' is not valid')
         sys.exit(1)  # Quit program, config must have been changed outside of program
 
     if interval_time == '':
-        print('Error: not configured properly for %s' % target_url)
-        print('Missing interval_time. Please amend the config.ini file to reflect the interval time...')
+        print('[-] Error: not configured properly for %s' % target_url)
+        print('[-] Missing interval_time. Please amend the config.ini file to reflect the interval time...')
         sys.exit(1)  # Quit program, config must have been changed outside of program
 
     if last_scan == '':
