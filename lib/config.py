@@ -16,20 +16,20 @@ class Config(object):
     def set_targets(self):
     
         while True:
-            host = raw_input("Enter a name for this host\n> ")
+            host = input("Enter a name for this host\n> ")
 
             # Check if exists
             if self.CONFIG.has_section(host):
-                print('A host with this name already exists\nPlease enter something else\n> ')
+                print('[-] A host with this name already exists\n[+] Please enter something else\n> ')
             else:
                 # Create new entry
-                url = raw_input('Please enter a target URL://)\n> ')
+                url = input('Please enter a target URL://)\n> ')
                 if validators.url(url):
-                    interval_time = raw_input("How long between scans? (minutes):\n> ")
+                    interval_time = input("How long between scans? (minutes):\n> ")
             
             self.add_host(host, url, interval_time, "")
 
-            add_more = raw_input('Would you like to add another host? (y/n)')
+            add_more = input('Would you like to add another host? (y/n)')
             if add_more.lower() != "y":
                 break
 
@@ -37,7 +37,7 @@ class Config(object):
         self.CONFIG.write(open('config.ini', 'w'))
     
 def print_targets(self):
-    print('\nCurrent Targets:')
+    print('\n[-] Current Targets:')
     # Loop through CONFIG and print section titles
     for each_section in self.CONFIG.sections():
         print(' - ' + each_section)
