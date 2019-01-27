@@ -1,7 +1,7 @@
-import requests, time
-from date import get_current_datetime, get_time_diff
-from config import validate_url, update_config
-from logger import write_log
+import requests, time, sys, threading
+from .date import get_current_datetime, get_time_diff
+from .config import validate_url, update_config
+from .logger import write_log
 
 def start_scan(host_name, url):  
     # Initiate a scan on the given URL
@@ -32,41 +32,42 @@ def start_scan(host_name, url):
 
     print("Status code for " + host_name + " = " + str(status_code))
 
-def do_scan(config):
-    for each_section in config.CONFIG.sections():
+def do_scan(config, host_name, target_url, interval_time, last_scan):
+    print('[+] Scanning: ' + target_url)
+    if not validate_url(target_url):
+        print('Error: URL %s' % target_url + ' is not valid')
+        sys.exit(1)  # Quit program, config must have been changed outside of program
 
-        target_url = config.CONFIG.get(each_section, 'target_url')
-        interval_time = config.CONFIG.get(each_section, 'interval_time')
-        last_scan = config.CONFIG.get(each_section, 'last_scan')
+    if interval_time == '':
+        print('Error: not configured properly for %s' % target_url)
+        print('Missing interval_time. Please amend the config.ini file to reflect the interval time...')
+        sys.exit(1)  # Quit program, config must have been changed outside of program
 
-        # debug
-        print('Target URL:')
-        print(target_url)
-        print('Interval Time:')
-        print(interval_time)
-        print('Last Scan:')
-        print(last_scan)
-
-        if not validate_url(target_url):
-            print('Error: URL %s' % target_url + ' is not valid')
-            break  # Quit program, config must have been changed outside of program
-
-        if interval_time == '':
-            print('Error: not configured properly for %s' % target_url)
-            print('Missing interval_time. Please amend the config.ini file to reflect the interval time...')
-            break  # Quit program, config must have been changed outside of program
-
-        if last_scan == '':
-            start_scan(each_section, target_url)
-            update_config(config, each_section, target_url, interval_time, get_current_datetime())
-        else:
-            if int(get_time_diff(last_scan)) >= int(interval_time):
-                start_scan(each_section, target_url)
-                update_config(config, each_section, target_url, interval_time, get_current_datetime())
+    if last_scan == '':
+        start_scan(host_name, target_url)
+        update_config(config, host_name, target_url, interval_time, get_current_datetime())
+        print('[+] Scan completed for ' + host_name + ', config updated with last scan...')
+    else:
+        if int(get_time_diff(last_scan)) >= int(interval_time):
+            start_scan(host_name, target_url)
+            update_config(config, host_name, target_url, interval_time, get_current_datetime())
+            print('[+] Scan completed for ' + host_name + ', config updated with last scan...')
+    time.sleep(int(interval_time)*60)
+    print('[+] Sleeping until next scan...')
+    time.sleep(int(interval_time)*60)
 
 def start_monitor(config):  # Start monitoring the target URL
+    threads=[]
     while True:
-        print('*Monitor started: running every 5 seconds*')
-        time.sleep(5)
-        do_scan(config)
-        print('Waiting ...\n')
+        print('[+] Loading sites to scan...')
+        for each_section in config.CONFIG.sections():
+            target_url = config.CONFIG.get(each_section, 'target_url')
+            interval_time = config.CONFIG.get(each_section, 'interval_time')
+            last_scan = config.CONFIG.get(each_section, 'last_scan')
+
+            t = threading.Thread(target=do_scan, args=(config, each_section, target_url, interval_time, last_scan))
+            t.start()
+            threads.append(t)
+
+        for t in threads:
+            t.join()
