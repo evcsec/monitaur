@@ -16,20 +16,20 @@ class Config(object):
     def set_targets(self):
     
         while True:
-            host = input("Enter a name for this host\n> ")
+            host = input("<configuration> Enter a name for this host\n> ")
 
             # Check if exists
             if self.CONFIG.has_section(host):
                 print('[-] A host with this name already exists\n[+] Please enter something else\n> ')
             else:
                 # Create new entry
-                url = input('Please enter a target URL://)\n> ')
+                url = input('<configuration> Please enter a target URL://)\n> ')
                 if validators.url(url):
-                    interval_time = input("How long between scans? (minutes):\n> ")
+                    interval_time = input("<configuration> How long between scans? (minutes):\n> ")
             
             self.add_host(host, url, interval_time, "")
 
-            add_more = input('Would you like to add another host? (y/n)')
+            add_more = input('<configuration> Would you like to add another host? (y/n)')
             if add_more.lower() != "y":
                 break
 
@@ -42,9 +42,9 @@ def print_targets(self):
     for each_section in self.CONFIG.sections():
         print(' - ' + each_section)
 
-def update_config(config, host, target_url, interval_time, last_scan):
-        config.CONFIG[host] = {'target_url': target_url, 'interval_time': interval_time,
-                                'last_scan': last_scan}
+def update_config(config, host, target_url, target_ip, interval_time, last_scan):
+        config.CONFIG[host] = {'target_url': target_url, 'target_ip': target_ip,
+                                'interval_time': interval_time, 'last_scan': last_scan}
         config.write_file()
 
 def validate_url(url):
