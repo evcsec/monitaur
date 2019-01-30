@@ -1,11 +1,27 @@
-import requests, time, sys, threading
+import requests, time, sys, threading, socket
 from .date import get_current_datetime, get_time_diff
 from .config import validate_url, update_config
 from .logger import write_log
 
+def port_scan(host_name, url):
+
+    ports = ['80', '443', '8000', '8443', '8080', '5443']
+    target_ip = socket.gethostbyname(url)
+    socket.setdefaulttimeout(1.5)
+    print("[+] Host: " + host_name + " translates to " + target_ip)
+
+    for port in ports:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        result = sock.connect_ex((target_ip, int(port)))
+        if result == 0:
+            print("\t[+] Host: " + host_name + " - Port {}:\tOpen".format(port))
+        sock.close()
+    print("[+] Host: " + host_name + " port scan has completed.")
+
 def start_scan(host_name, url):  
     # Initiate a scan on the given URL
-    r, status_code = None
+    r = None 
+    status_code = None
 
     try:
         r = requests.get(url)
@@ -33,9 +49,15 @@ def start_scan(host_name, url):
 
 def do_scan(config, host_name, target_url, interval_time, last_scan):
     print('[+] Scanning: ' + target_url)
-    if not validate_url(target_url):
-        print('[-] Error: URL %s' % target_url + ' is not valid')
-        sys.exit(1)  # Quit program, config must have been changed outside of program
+
+    if not validate_url('https://' + target_url):
+        print('[-] Error: URL https://%s' % target_url + ' is not valid')
+        complete_url = "http://" + target_url
+        if not validate_url('http://' + target_url):
+            print('[-] Error: URL http://%s' % target_url + ' is not valid')
+            sys.exit(1)  # Quit program, config must have been changed outside of program
+    else:
+        complete_url = "https://" + target_url
 
     if interval_time == '':
         print('[-] Error: not configured properly for %s' % target_url)
@@ -43,15 +65,16 @@ def do_scan(config, host_name, target_url, interval_time, last_scan):
         sys.exit(1)  # Quit program, config must have been changed outside of program
 
     if last_scan == '':
-        start_scan(host_name, target_url)
+        start_scan(host_name, complete_url)
+        port_scan(host_name, target_url)
         update_config(config, host_name, target_url, interval_time, get_current_datetime())
         print('[+] Scan completed for ' + host_name + ', config updated with last scan...')
     else:
         if int(get_time_diff(last_scan)) >= int(interval_time):
-            start_scan(host_name, target_url)
+            start_scan(host_name, complete_url)
+            port_scan(host_name, target_url)
             update_config(config, host_name, target_url, interval_time, get_current_datetime())
             print('[+] Scan completed for ' + host_name + ', config updated with last scan...')
-    time.sleep(int(interval_time)*60)
     print('[+] Sleeping until next scan...')
     time.sleep(int(interval_time)*60)
 
