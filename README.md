@@ -1,7 +1,8 @@
 
 # Monitaur
 
-Monitaur is a tool to periodically detect and alert on website availability. A typical use for this would be to query multiple hosted services for availability.
+A multithreaded website monitoring CLI tool, used to confirm website access, open ports and detects IP changes.
+This tool will be mutured to implement alerting for changes to IPs and changes to website availability.
 
 ## Authors
 
@@ -10,7 +11,9 @@ Monitaur is a tool to periodically detect and alert on website availability. A t
 
 
 ## Getting Started
-A first off run and set the config file and you're off and running.
+A first run will request the configuration upfront. 
+Once a config file exists, we rely on this configuration to move forward.
+Configuration (config.ini) can be updated separately at this stage, but this will be changed moving forward.
 
 ### Prerequisites
 
