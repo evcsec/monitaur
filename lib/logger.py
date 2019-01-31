@@ -3,7 +3,7 @@ import os, time
 
 def write_log(host_name, msg_type, error_string):
     # Is file already open?
-    log_file = "monitaur.log"
+    log_file = "log/" + host_name + ".log"
 
     if os.path.exists(log_file):
         try:

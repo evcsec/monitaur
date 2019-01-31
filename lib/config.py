@@ -23,7 +23,7 @@ class Config(object):
                 print('[-] A host with this name already exists\n[+] Please enter something else\n> ')
             else:
                 # Create new entry
-                url = input('<configuration> Please enter a target URL://)\n> ')
+                url = input('<configuration> Please enter a target URL (without http:// or https://)://)\n> ')
                 if validators.url(url):
                     interval_time = input("<configuration> How long between scans? (minutes):\n> ")
             
