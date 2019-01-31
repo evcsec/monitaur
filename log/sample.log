@@ -1,0 +1,7 @@
+# Sample Logs
+google,2019-01-31 20:58:02,Status Response,status_code = 200
+google,2019-01-31 20:58:02,Error,google has detected an IP conflict. Original:X.X.X.X, New:Y.Y.Y.Y
+google,2019-01-31 21:00:09,Status Response,status_code = 200
+google,2019-01-31 21:00:09,Information,google translates to Y.Y.Y.Y
+google,2019-01-31 21:02:17,Status Response,status_code = 200
+google,2019-01-31 21:02:17,Information,google translates to Y.Y.Y.Y
