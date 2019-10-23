@@ -4,10 +4,12 @@
 A multithreaded website monitoring CLI tool, used to confirm website access, open ports and detects IP changes.
 This tool will be mutured to implement alerting for changes to IPs and changes to website availability.
 
+Note: This tool has been rolled into [Overseer](https://github.com/evcsec/overseer) created by the same authors.
+
 ## Authors
 
-* **Evcsec**
-* **snags141**
+* **@evcsec**
+* **@snags141**
 
 
 ## Getting Started
